@@ -3,7 +3,7 @@ title: Carrier
 description: The carrier javascript API.
 ---
 
-# elastos-plugin-carrier
+# elastos-trinity-plugins-carrier
 
 This plugin defines a global `cordova.carrierPlugin` object, which provides an API for carrier library.
 
@@ -360,7 +360,8 @@ Get carrier ID from carrier node address.
 <a name="module_carrierPlugin+createObject"></a>
 
 ### carrierPlugin.createObject(onSuccess, [onError], [options], callbacks)
-Create a carrier object instance. After initializing the instance,it's ready to start and therefore connect to carrier network.
+Create a carrier object instance. After initializing the instance,
+it's ready to start and therefore connect to carrier network.
 
 **Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)  
 
@@ -452,7 +453,8 @@ Add or remove Stream callback.
 <a name="Stream+write"></a>
 
 ### stream.write(onSuccess, [onError], data)
-Send outgoing data to remote peer.If the stream is in multiplexing mode, application can not call this function.
+Send outgoing data to remote peer.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -465,7 +467,8 @@ Send outgoing data to remote peer.If the stream is in multiplexing mode, applic
 <a name="Stream+openChannel"></a>
 
 ### stream.openChannel(onSuccess, [onError], cookie)
-Open a new channel on multiplexing stream.If the stream is in multiplexing mode, application can not call this function.
+Open a new channel on multiplexing stream.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -478,7 +481,8 @@ Open a new channel on multiplexing stream.If the stream is in multiplexing mode
 <a name="Stream+closeChannel"></a>
 
 ### stream.closeChannel(onSuccess, [onError], channel)
-Close a new channel on multiplexing stream.If the stream is in multiplexing mode, application can not call this function.
+Close a new channel on multiplexing stream.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -491,7 +495,8 @@ Close a new channel on multiplexing stream.If the stream is in multiplexing mod
 <a name="Stream+writeChannel"></a>
 
 ### stream.writeChannel(onSuccess, [onError], channel, data)
-Send outgoing data to remote peer.If the stream is in multiplexing mode, application can not call this function.
+Send outgoing data to remote peer.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -505,7 +510,8 @@ Send outgoing data to remote peer.If the stream is in multiplexing mode, applic
 <a name="Stream+pendChannel"></a>
 
 ### stream.pendChannel(onSuccess, [onError], channel)
-Request remote peer to pend channel data sending.If the stream is in multiplexing mode, application can not call this function.
+Request remote peer to pend channel data sending.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -518,7 +524,8 @@ Request remote peer to pend channel data sending.If the stream is in multiplexi
 <a name="Stream+resumeChannel"></a>
 
 ### stream.resumeChannel(onSuccess, [onError], channel)
-Request remote peer to resume channel data sending.If the stream is in multiplexing mode, application can not call this function.
+Request remote peer to resume channel data sending.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -531,7 +538,8 @@ Request remote peer to resume channel data sending.If the stream is in multiple
 <a name="Stream+openPortForwarding"></a>
 
 ### stream.openPortForwarding(onSuccess, [onError], service, protocol, host, port)
-Open a port forwarding to remote service over multiplexing.If the stream is in multiplexing mode, application can not call this function.
+Open a port forwarding to remote service over multiplexing.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -547,7 +555,8 @@ Open a port forwarding to remote service over multiplexing.If the stream is in 
 <a name="Stream+closePortForwarding"></a>
 
 ### stream.closePortForwarding(onSuccess, [onError], portForwarding)
-Close a port forwarding.If the stream is in multiplexing mode, application can not call this function.
+Close a port forwarding.
+If the stream is in multiplexing mode, application can not call this function.
 
 **Kind**: instance method of [<code>Stream</code>](#Stream)  
 
@@ -603,7 +612,8 @@ The class representing Carrier Session.
 <a name="Session+close"></a>
 
 ### session.close()
-Close a session to friend. All resources include streams, channels, portforwardingsassociated with current session will be destroyed.
+Close a session to friend. All resources include streams, channels, portforwardings
+associated with current session will be destroyed.
 
 **Kind**: instance method of [<code>Session</code>](#Session)  
 <a name="Session+request"></a>
@@ -622,7 +632,9 @@ Send session request to the friend.
 <a name="Session+replyRequest"></a>
 
 ### session.replyRequest(onSuccess, [onError], status, reason)
-Reply the session request from friend.This function will send a session response to friend.
+Reply the session request from friend.
+
+This function will send a session response to friend.
 
 **Kind**: instance method of [<code>Session</code>](#Session)  
 
@@ -636,7 +648,10 @@ Reply the session request from friend.This function will send a session respon
 <a name="Session+start"></a>
 
 ### session.start(onSuccess, [onError], sdp)
-Begin to start a session.All streams in current session will try to connect with remote friend,The stream status will update to application by stream's StreamHandler.
+Begin to start a session.
+
+All streams in current session will try to connect with remote friend,
+The stream status will update to application by stream's StreamHandler.
 
 **Kind**: instance method of [<code>Session</code>](#Session)  
 
@@ -649,7 +664,17 @@ Begin to start a session.All streams in current session will try to connect wi
 <a name="Session+addStream"></a>
 
 ### session.addStream(onSuccess, [onError], type, options, callbacks)
-Add a new stream to session.Carrier stream supports several underlying transport mechanisms:  - Plain/encrypted UDP data gram protocol  - Plain/encrypted TCP like reliable stream protocol  - Multiplexing over UDP  - Multiplexing over TCP like reliable protocol Application can use options to specify the new stream mode. Multiplexing over UDP can not provide reliable transport.
+Add a new stream to session.
+
+Carrier stream supports several underlying transport mechanisms:
+
+  - Plain/encrypted UDP data gram protocol
+  - Plain/encrypted TCP like reliable stream protocol
+  - Multiplexing over UDP
+  - Multiplexing over TCP like reliable protocol
+
+ Application can use options to specify the new stream mode.
+ Multiplexing over UDP can not provide reliable transport.
 
 **Kind**: instance method of [<code>Session</code>](#Session)  
 
@@ -677,7 +702,9 @@ Remove a stream from session.
 <a name="Session+addService"></a>
 
 ### session.addService(onSuccess, [onError], service, protocol, host, port)
-Add a new portforwarding service to session.The registered services can be used by remote peer in portforwarding request.
+Add a new portforwarding service to session.
+
+The registered services can be used by remote peer in portforwarding request.
 
 **Kind**: instance method of [<code>Session</code>](#Session)  
 
@@ -693,7 +720,9 @@ Add a new portforwarding service to session.The registered services can be use
 <a name="Session+removeService"></a>
 
 ### session.removeService(onSuccess, [onError], service)
-Remove a portforwarding server to session.This function has not effect on existing portforwarings.
+Remove a portforwarding server to session.
+
+This function has not effect on existing portforwarings.
 
 **Kind**: instance method of [<code>Session</code>](#Session)  
 
@@ -803,7 +832,8 @@ Add or remove Carrier callback.
 <a name="Carrier+start"></a>
 
 ### carrier.start(onSuccess, [onError], iterateInterval)
-Start carrier node asynchronously to connect to carrier network. If the connectionto network is successful, carrier node starts working.
+Start carrier node asynchronously to connect to carrier network. If the connection
+to network is successful, carrier node starts working.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -828,7 +858,9 @@ Get self user information.
 <a name="Carrier+setSelfInfo"></a>
 
 ### carrier.setSelfInfo(onSuccess, [onError], userinfo)
-Update self user information.After self user information changed, carrier node will update this informationto carrier network, and thereupon network broadcasts the change to all friends.
+Update self user information.
+After self user information changed, carrier node will update this information
+to carrier network, and thereupon network broadcasts the change to all friends.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -841,7 +873,10 @@ Update self user information.After self user information changed, carrier node 
 <a name="Carrier+isReady"></a>
 
 ### carrier.isReady(onSuccess, [onError])
-Check if carrier node instance is being ready.All carrier interactive APIs should be called only if carrier node instanceis being ready.
+Check if carrier node instance is being ready.
+
+All carrier interactive APIs should be called only if carrier node instance
+is being ready.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -878,7 +913,10 @@ Get specified friend information.
 <a name="Carrier+labelFriend"></a>
 
 ### carrier.labelFriend(onSuccess, [onError], userId, label)
-Set the label of the specified friend.The label of a friend is a private alias name for current user. It can beseen by current user only, and has no impact to the target friend itself.
+Set the label of the specified friend.
+
+The label of a friend is a private alias name for current user. It can be
+seen by current user only, and has no impact to the target friend itself.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -905,7 +943,10 @@ Check if the user ID is friend.
 <a name="Carrier+addFriend"></a>
 
 ### carrier.addFriend(onSuccess, [onError], address, hello)
-Add friend by sending a new friend request.This function will add a new friend with specific address, and thensend a friend request to the target node.
+Add friend by sending a new friend request.
+
+This function will add a new friend with specific address, and then
+send a friend request to the target node.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -919,7 +960,9 @@ Add friend by sending a new friend request.This function will add a new friend
 <a name="Carrier+acceptFriend"></a>
 
 ### carrier.acceptFriend(onSuccess, [onError], userId)
-Accept the friend request.This function is used to add a friend in response to a friend request.
+Accept the friend request.
+
+This function is used to add a friend in response to a friend request.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -932,7 +975,9 @@ Accept the friend request.This function is used to add a friend in response to
 <a name="Carrier+removeFriend"></a>
 
 ### carrier.removeFriend(onSuccess, [onError], userId)
-Remove a friend.This function will remove a friend on this carrier node.
+Remove a friend.
+
+This function will remove a friend on this carrier node.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -945,7 +990,11 @@ Remove a friend.This function will remove a friend on this carrier node.
 <a name="Carrier+sendFriendMessage"></a>
 
 ### carrier.sendFriendMessage(onSuccess, [onError], to, message)
-Send a message to a friend.The message length may not exceed MAX_APP_MESSAGE_LEN, and message itselfshould be text-formatted. Larger messages must be split by applicationand sent as separate messages. Other nodes can reassemble the fragments.
+Send a message to a friend.
+
+The message length may not exceed MAX_APP_MESSAGE_LEN, and message itself
+should be text-formatted. Larger messages must be split by application
+and sent as separate messages. Other nodes can reassemble the fragments.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -959,7 +1008,10 @@ Send a message to a friend.The message length may not exceed MAX_APP_MESSAGE_L
 <a name="Carrier+inviteFriend"></a>
 
 ### carrier.inviteFriend(onSuccess, [onError], to, data, handler)
-Send invite request to a friend.Application can attach the application defined data with in the inviterequest, and the data will send to target friend.
+Send invite request to a friend.
+
+Application can attach the application defined data with in the invite
+request, and the data will send to target friend.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -974,7 +1026,9 @@ Send invite request to a friend.Application can attach the application defined
 <a name="Carrier+replyFriendInvite"></a>
 
 ### carrier.replyFriendInvite(onSuccess, [onError], to, status, reason, data)
-Reply the friend invite request.This function will send a invite response to friend.
+Reply the friend invite request.
+
+This function will send a invite response to friend.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -990,7 +1044,9 @@ Reply the friend invite request.This function will send a invite response to f
 <a name="Carrier+newSession"></a>
 
 ### carrier.newSession(onSuccess, [onError], to)
-Create a new session to a friend.The session object represent a conversation handle to a friend.
+Create a new session to a friend.
+
+The session object represent a conversation handle to a friend.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -1003,7 +1059,8 @@ Create a new session to a friend.The session object represent a conversation h
 <a name="Carrier+destroy"></a>
 
 ### carrier.destroy(onSuccess, [onError])
-Disconnect carrier node from carrier network, and destroy all associated resources to carreier node instance.After calling the method, the carrier node instance becomes invalid.
+Disconnect carrier node from carrier network, and destroy all associated resources to carreier node instance.
+After calling the method, the carrier node instance becomes invalid.
 
 **Kind**: instance method of [<code>Carrier</code>](#Carrier)  
 
@@ -1030,7 +1087,8 @@ The Carrier user information.
 <a name="Options"></a>
 
 ## Options : <code>Object</code>
-Options defines several settings that control the way the Carrier node connects to the carrier network.Default values are not defined for bootstraps options, so application should be set bootstrap nodes clearly.
+Options defines several settings that control the way the Carrier node connects to the carrier network.
+Default values are not defined for bootstraps options, so application should be set bootstrap nodes clearly.
 
 **Kind**: global typedef  
 **Properties**
@@ -1191,7 +1249,10 @@ The callback function to report state of stream when it's state changes.
 <a name="onStreamData"></a>
 
 ## onStreamData : <code>function</code>
-The callback will be called when the stream receives incoming packet.If the stream enabled multiplexing mode, application will notreceive stream-layered data callback any more. All data will reportedas multiplexing channel data.
+The callback will be called when the stream receives incoming packet.
+If the stream enabled multiplexing mode, application will not
+receive stream-layered data callback any more. All data will reported
+as multiplexing channel data.
 
 **Kind**: global typedef  
 
@@ -1291,7 +1352,10 @@ The callback function to process the self connection status.
 <a name="onReady"></a>
 
 ## onReady : <code>function</code>
-The callback function to process the ready notification.Application should wait this callback invoked before calling anyfunction to interact with friends.
+The callback function to process the ready notification.
+
+Application should wait this callback invoked before calling any
+function to interact with friends.
 
 **Kind**: global typedef  
 
