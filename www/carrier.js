@@ -572,7 +572,7 @@
                var _onSuccess = function (ret) {
                    ret.session = me;
                    me.streams[stream.id] = null;
-                   me.carrierPlugin.stream[stream.objId] = null;
+                   me.carrierPlugin.streams[stream.objId] = null;
                    if (onSuccess) onSuccess(ret);
                };
                exec(_onSuccess, onError, 'CarrierPlugin', "removeStream", [this.objId, stream.objId]);
@@ -1324,7 +1324,7 @@
        this.onStreamEvent = function (event) {
            event.stream = me.streams[event.objId];
            event.objId = null;
-           if (event.stream.callbacks[event.name]) {
+           if (event.stream && event.stream.callbacks[event.name]) {
                event.stream.callbacks[event.name](event);
            }
        },
@@ -1361,7 +1361,7 @@
            event.id = null;
            if (me.SRCEvent[id].callback) {
                event.session = me.SRCEvent[id].session;
-               this.SRCEvent[id].callback(event);
+               me.SRCEvent[id].callback(event);
            }
        };
    
