@@ -19,9 +19,9 @@
     * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     * SOFTWARE.
     */
-    
+
    var exec = require('cordova/exec');
-   
+
    const CARRIER_CB_NAMES = [
        "onConnection",
        "onReady",
@@ -37,7 +37,7 @@
        "onFriendInviteRequest",
        "onSessionRequest",
    ];
-   
+
    const STREAM_CB_NAMES = [
        "onStateChanged",
        "onStreamData",
@@ -48,7 +48,7 @@
        "onChannelPending",
        "onChannelResume",
    ];
-   
+
    /**
     * The Carrier user information.
     *
@@ -59,7 +59,7 @@
     * @property {string} port The server port.
     * @property {string} publicKey The publicKey.
     */
-   
+
    /**
     * Options defines several settings that control the way the Carrier node connects to the carrier network.
     * Default values are not defined for bootstraps options, so application should be set bootstrap nodes clearly.
@@ -71,7 +71,7 @@
     * @property {string}  persistentLocation Set the persistent data location. The location must be set.
     * @property {Array}  bootstraps BootstrapNode Array.
     */
-   
+
    /**
     * The Carrier user information.
     *
@@ -86,7 +86,7 @@
     * @property {string} email The email address.
     * @property {string} region The region.
     */
-   
+
     /**
     * The Carrier friend information.
     *
@@ -97,7 +97,7 @@
     * @property {ConnectionStatus} connection The connection status.
     * @property {string} label The friend's label name.
     */
-   
+
     /**
     * The netword address information.
     *
@@ -109,7 +109,7 @@
     * @property {string}           [relatedAddress] The related address status.
     * @property {string}           [relatedPort]    The related port.
     */
-   
+
     /**
     * The netword transport information.
     *
@@ -119,7 +119,7 @@
     * @property {AddressInfo}      localAddr   The local address.
     * @property {AddressInfo}      remoteAddr  The remote address.
     */
-   
+
    /**
     * The Carrier callbacks.
     *
@@ -139,7 +139,7 @@
     * @property {onFriendInviteRequest} onFriendInviteRequest  The callback function to process the friend invite request.
     * @property {onSessionRequest}      onSessionRequest       The callback function that handle session request.
     */
-   
+
    /**
     * The Stream callbacks.
     *
@@ -154,7 +154,7 @@
     * @property {onChannelPending} onChannelPending    The callback function to be called when remote peer ask to pend data sending.
     * @property {onChannelResume}  onChannelResume     The callback function to be called when remote peer ask to resume data sending.
     */
-   
+
     /**
     * The callback function to process the friend invite response.
     *
@@ -165,7 +165,7 @@
     * @param {string}  reason		The error message if status is error, otherwise null
     * @param {string}  data		The application defined data return by target user
     */
-   
+
    /**
     * The callback function to receive session request complete event.
     *
@@ -176,7 +176,7 @@
     * @param {string}  reason      The error message if status is error, or nil if session request error happened.
     * @param {string}  sdp         The remote users SDP. Reference: https://tools.ietf.org/html/rfc4566
     */
-   
+
    /**
     * The class representing Carrier stream.
     * @class
@@ -184,14 +184,14 @@
    function Stream() {
        this.objId = null;
        this.carrierPlugin = null;
-   
+
        /** @property {number}  id Stream ID. **/
        this.id = null;
        /** @property {Carrier} carrier Parent carrier object. **/
        this.carrier = null;
        /** @property {Session} session Parent session object. **/
        this.session = null;
-   
+
        this.callbacks = {
            /* Common callbacks */
            /**
@@ -203,7 +203,7 @@
             * @param {StreamState} state       Stream state defined in StreamState
             */
            onStateChanged: null,
-   
+
            /* Stream layered data callbacks */
            /**
             * The callback will be called when the stream receives incoming packet.
@@ -217,7 +217,7 @@
             * @param {base64} data        The received packet data.
             */
            onStreamData: null,
-   
+
            /* Channel callbacks */
            /**
             * The callback function to be called when new multiplexing channel request to open.
@@ -231,7 +231,7 @@
             *
             */
            onChannelOpen: null,
-   
+
            /**
             * The callback function to be called when new multiplexing channel opened.
             *
@@ -241,7 +241,7 @@
             * @param {number} channel     The current channel ID.
             */
            onChannelOpened: null,
-   
+
            /**
             * The callback function to be called when channel close.
             *
@@ -252,7 +252,7 @@
             * @param {string} reason      Channel close reason code, defined in CloseReason.
             */
            onChannelClose: null,
-   
+
            /**
             * The callback functiont to be called when channel received incoming data.
             *
@@ -263,7 +263,7 @@
             * @param {base64} data        The received packet data.
             */
            onChannelData: null,
-   
+
            /**
             * The callback function to be called when remote peer ask to pend data sending.
             *
@@ -273,7 +273,7 @@
             * @param {number} channel     The current channel ID.
             */
            onChannelPending: null,
-   
+
            /**
             * The callback function to be called when remote peer ask to resume data sending.
             *
@@ -284,12 +284,12 @@
             */
            onChannelResume: null,
        }
-   
+
    }
-   
+
    Stream.prototype = {
        constructor: Stream,
-   
+
        /**
         * Add or remove Stream callback.
         *
@@ -308,7 +308,7 @@
            }
            return fasle;
        },
-   
+
        process: function (onSuccess, onError, name, args) {
            var me = this;
            var _onSuccess = function (ret) {
@@ -317,7 +317,7 @@
            };
            exec(_onSuccess, onError, 'CarrierPlugin', name, args);
        },
-   
+
        /**
         * Get tranport info of carrier stream.
         * @param {Function} onSuccess  The function to call when success, the param is a TransportInfo object
@@ -326,7 +326,7 @@
        getTransportInfo: function (onSuccess, onError) {
            this.process(onSuccess, onError, "getTransportInfo", [this.objId]);
        },
-   
+
        /**
         * Send outgoing data to remote peer.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -338,7 +338,7 @@
        write: function (onSuccess, onError, data) {
            this.process(onSuccess, onError, "streamWrite", [this.objId, data]);
        },
-   
+
        /**
         * Open a new channel on multiplexing stream.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -350,7 +350,7 @@
        openChannel: function (onSuccess, onError, cookie) {
            this.process(onSuccess, onError, "openChannel", [this.objId, cookie]);
        },
-   
+
        /**
         * Close a new channel on multiplexing stream.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -362,7 +362,7 @@
        closeChannel: function (onSuccess, onError, channel) {
            this.process(onSuccess, onError, "closeChannel", [this.objId, channel]);
        },
-   
+
        /**
         * Send outgoing data to remote peer.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -375,7 +375,7 @@
        writeChannel: function (onSuccess, onError, channel, data) {
            this.process(onSuccess, onError, "writeChannel", [this.objId, channel, data]);
        },
-   
+
        /**
         * Request remote peer to pend channel data sending.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -387,7 +387,7 @@
        pendChannel: function (onSuccess, onError, channel) {
            this.process(onSuccess, onError, "pendChannel", [this.objId, channel]);
        },
-   
+
        /**
         * Request remote peer to resume channel data sending.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -399,7 +399,7 @@
        resumeChannel: function (onSuccess, onError, channel) {
            this.process(onSuccess, onError, "resumeChannel", [this.objId, channel]);
        },
-   
+
        /**
         * Open a port forwarding to remote service over multiplexing.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -414,7 +414,7 @@
        openPortForwarding: function (onSuccess, onError, service, protocol, host, port) {
            this.process(onSuccess, onError, "openPortForwarding", [this.objId, service, protocol, host, port]);
        },
-   
+
        /**
         * Close a port forwarding.
         * If the stream is in multiplexing mode, application can not call this function.
@@ -427,7 +427,7 @@
            this.process(onSuccess, onError, "closePortForwarding", [this.objId, portForwarding]);
        },
    }
-   
+
    /**
     * The class representing Carrier Session.
     * @class
@@ -436,16 +436,16 @@
        this.objId = null;
        this.carrierPlugin = null;
        this.streams = [];
-   
+
        /** @property {string} peer The remote peer userid. **/
        this.peer = null;
        /** @property {Carrier} carrier Parent carrier object. */
        this.carrier = null;
    }
-   
+
    Session.prototype = {
        constructor: Session,
-   
+
        process: function (onSuccess, onError, name, args) {
            var me = this;
            var _onSuccess = function (ret) {
@@ -454,7 +454,7 @@
            };
            exec(_onSuccess, onError, 'CarrierPlugin', name, args);
        },
-   
+
        /**
         * Close a session to friend. All resources include streams, channels, portforwardings
         * associated with current session will be destroyed.
@@ -462,7 +462,7 @@
        close: function (onSuccess, onError) {
            this.process(onSuccess, onError, "sessionClose", [this.objId]);
        },
-   
+
        // /**
        //  * Get remote peer id.
        //  *
@@ -472,7 +472,7 @@
        // getPeer: function (onSuccess, onError) {
        //     this.process(onSuccess, onError, "getPeer", [this.objId]);
        // },
-   
+
        /**
         * Send session request to the friend.
         *
@@ -487,7 +487,7 @@
            }
            this.process(onSuccess, onError, "sessionRequest", [this.objId, handlerId]);
        },
-   
+
        /**
         * Reply the session request from friend.
         *
@@ -501,7 +501,7 @@
        replyRequest: function (onSuccess, onError, status, reason) {
            this.process(onSuccess, onError, "sessionReplyRequest", [this.objId, status, reason]);
        },
-   
+
        /**
         * Begin to start a session.
         *
@@ -515,7 +515,7 @@
        start: function (onSuccess, onError, sdp) {
            this.process(onSuccess, onError, "sessionStart", [this.objId, sdp]);
        },
-   
+
        /**
         * Add a new stream to session.
         *
@@ -549,7 +549,7 @@
                me.carrierPlugin.streams[stream.objId] = stream;
                if (onSuccess) onSuccess(stream);
            };
-   
+
            if (callbacks) {
                for (var i = 0; i < STREAM_CB_NAMES.length; i++) {
                    var name = STREAM_CB_NAMES[i];
@@ -558,7 +558,7 @@
            }
            exec(_onSuccess, onError, 'CarrierPlugin', 'addStream', [this.objId, type, options]);
        },
-   
+
        /**
         * Remove a stream from session.
         *
@@ -581,7 +581,7 @@
                error("This steam isn't belong the session!");
            }
        },
-   
+
        /**
         * Add a new portforwarding service to session.
         *
@@ -597,7 +597,7 @@
        addService: function (onSuccess, onError, service, protocol, host, port) {
            this.process(onSuccess, onError, "addService", [this.objId, service, protocol, host, port]);
        },
-   
+
        /**
         * Remove a portforwarding server to session.
         *
@@ -611,7 +611,7 @@
            this.process(onSuccess, onError, "removeService", [this.objId, service]);
        }
    }
-   
+
    /**
     * The class representing Carrier.
     * @class
@@ -619,17 +619,17 @@
    function Carrier() {
        this.objId = null;
        this.carrierPlugin = null;
-   
+
        /** @property {string} nodeId Node id. **/
        this.nodeId = null;
        /** @property {string} userId User id. **/
        this.userId = null;
        /** @property {string} address Node address. **/
        this.address = null;
-   
+
        this._nospam = null;
        this._presence = null;
-   
+
        this.callbacks = {
            /**
             * The callback function to process the self connection status.
@@ -640,7 +640,7 @@
             * @param {number}  status 		Current connection status. @see ConnectionStatus
             */
            onConnection: null,
-   
+
            /**
             * The callback function to process the ready notification.
             *
@@ -652,7 +652,7 @@
             * @param {Carrier}	carrier		Carrier node instance
             */
            onReady: null,
-   
+
            /**
             * The callback function to process the self info changed event.
             *
@@ -662,7 +662,7 @@
             * @param {UserInfo} userInfo 	The updated user information
             */
            onSelfInfoChanged: null,
-   
+
            /**
             * The callback function to iterate the each friend item in friend list.
             *
@@ -672,7 +672,7 @@
             * @param {Array}   friends 	The friends list.
             */
            onFriends: null,
-   
+
            /**
             * The callback function to process the friend connections status changed event.
             *
@@ -683,7 +683,7 @@
             * @param {number}  status	    The connection status of friend. @see ConnectionStatus
             */
            onFriendConnection: null,
-   
+
            /**
             * The callback function to process the friend information changed event.
             *
@@ -694,7 +694,7 @@
             * @param {FriendInfo}  info	The update friend information
             */
            onFriendInfoChanged: null,
-   
+
            /**
             * The callback function to process the friend presence changed event.
             *
@@ -705,7 +705,7 @@
             * @param {number}  presence	The presence status of the friend
             */
            onFriendPresence: null,
-   
+
            /**
             * The callback function to process the friend request.
             *
@@ -717,7 +717,7 @@
             * @param {string}   hello      The PIN for target user, or any application defined content
             */
            onFriendRequest: null,
-   
+
            /**
             * The callback function to process the new friend added event.
             *
@@ -727,7 +727,7 @@
             * @param {FriendInfo}  friendInfo	The added friend's information
             */
            onFriendAdded: null,
-   
+
            /**
             * The callback function to process the friend removed event.
             *
@@ -737,7 +737,7 @@
             * @param {string}  friendId   	The friend's user id
             */
            onFriendRemoved: null,
-   
+
            /**
             * The callback function to process the friend message.
             *
@@ -748,7 +748,7 @@
             * @param {string}  message   	The message content
             */
            onFriendMessage: null,
-   
+
            /**
             * The callback function to process the friend invite request.
             *
@@ -759,7 +759,7 @@
             * @param {string}  data       	The application defined data sent from friend
             */
            onFriendInviteRequest: null,
-   
+
            /**
             * The callback function that handle session request.
             *
@@ -772,10 +772,10 @@
            onSessionRequest: null,
        }
    }
-   
+
    Carrier.prototype = {
        constructor: Carrier,
-   
+
        /** @property {number} nospam The nospam for Carrier address is used to eliminate spam friend. **/
        set nospam(value) {
            var me = this;
@@ -784,11 +784,11 @@
            };
            this.process(success, null, "setNospam", [this.objId, value]);
        },
-   
+
        get nospam() {
            return this._nospam;
        },
-   
+
        /** @property {number} presence Presence status. **/
        set presence(value) {
            var me = this;
@@ -797,11 +797,11 @@
            };
            this.process(success, null, "setPresence", [this.objId, value]);
        },
-   
+
        get presence() {
            return this._presence;
        },
-   
+
        /**
         * Add or remove Carrier callback.
         *
@@ -820,7 +820,7 @@
            }
            return fasle;
        },
-   
+
        process: function (onSuccess, onError, name, args) {
            var me = this;
            var _onSuccess = function (ret) {
@@ -829,7 +829,7 @@
            };
            exec(_onSuccess, onError, 'CarrierPlugin', name, args);
        },
-   
+
        /**
         * Start carrier node asynchronously to connect to carrier network. If the connection
         * to network is successful, carrier node starts working.
@@ -841,8 +841,8 @@
        start: function (onSuccess, onError, iterateInterval) {
            this.process(onSuccess, onError, "carrierStart", [this.objId, iterateInterval]);
        },
-   
-   
+
+
        /**
         * Get self user information.
         *
@@ -852,7 +852,7 @@
        getSelfInfo: function (onSuccess, onError) {
            this.process(onSuccess, onError, "getSelfInfo", [this.objId]);
        },
-   
+
        /**
         * Update self user information.
         * After self user information changed, carrier node will update this information
@@ -865,8 +865,8 @@
        setSelfInfo: function (onSuccess, onError, name, value) {
            this.process(onSuccess, onError, "setSelfInfo", [this.objId, name, value]);
        },
-   
-   
+
+
        // /**
        //  * Get the nospam for Carrier address.
        //  *
@@ -880,7 +880,7 @@
        // getNospam: function (onSuccess, onError) {
        //     this.process(onSuccess, onError, "getNospam", [this.objId]);
        // },
-   
+
        // /**
        //  * Update self nospam of address for this carrier node.
        //  *
@@ -895,7 +895,7 @@
        // setNospam: function (onSuccess, onError, nospam) {
        //     this.process(onSuccess, onError, "setNospam", [this.objId, nospam]);
        // },
-   
+
        // /**
        //  * Get self presence status.
        //  *
@@ -905,7 +905,7 @@
        // getPresence: function (onSuccess, onError) {
        //     this.process(onSuccess, onError, "getPresence", [this.objId]);
        // },
-   
+
        // /**
        //  * Update self presence status.
        //  *
@@ -916,7 +916,7 @@
        // setPresence: function (onSuccess, onError, presence) {
        //     this.process(onSuccess, onError, "setPresence", [this.objId, presence]);
        // },
-   
+
        /**
         * Check if carrier node instance is being ready.
         *
@@ -929,7 +929,7 @@
        isReady: function (onSuccess, onError) {
            this.process(onSuccess, onError, "isReady", [this.objId]);
        },
-   
+
        /**
         * Get friends list.
         *
@@ -939,7 +939,7 @@
        getFriends: function (onSuccess, onError) {
            this.process(onSuccess, onError, "getFriends", [this.objId]);
        },
-   
+
        /**
         * Get specified friend information.
         *
@@ -950,7 +950,7 @@
        getFriend: function (onSuccess, onError, userId) {
            this.process(onSuccess, onError, "getFriend", [this.objId, userId]);
        },
-   
+
        /**
         * Set the label of the specified friend.
         *
@@ -965,7 +965,7 @@
        labelFriend: function (onSuccess, onError, userId, label) {
            this.process(onSuccess, onError, "labelFriend", [this.objId, userId, label]);
        },
-   
+
        /**
         * Check if the user ID is friend.
         *
@@ -976,7 +976,7 @@
        isFriend: function (onSuccess, onError, userId, label) {
            this.process(onSuccess, onError, "isFriend", [this.objId, userId]);
        },
-   
+
        /**
         * Add friend by sending a new friend request.
         *
@@ -991,7 +991,7 @@
        addFriend: function (onSuccess, onError, address, hello) {
            this.process(onSuccess, onError, "addFriend", [this.objId, address, hello]);
        },
-   
+
        /**
         * Accept the friend request.
         *
@@ -1004,7 +1004,7 @@
        acceptFriend: function (onSuccess, onError, userId) {
            this.process(onSuccess, onError, "acceptFriend", [this.objId, userId]);
        },
-   
+
        /**
         * Remove a friend.
         *
@@ -1017,7 +1017,7 @@
        removeFriend: function (onSuccess, onError, userId) {
            this.process(onSuccess, onError, "removeFriend", [this.objId, userId]);
        },
-   
+
        /**
         * Send a message to a friend.
         *
@@ -1033,7 +1033,7 @@
        sendFriendMessage: function (onSuccess, onError, to, message) {
            this.process(onSuccess, onError, "sendFriendMessage", [this.objId, to, message]);
        },
-   
+
        /**
         * Send invite request to a friend.
         *
@@ -1053,7 +1053,7 @@
            }
            this.process(onSuccess, onError, "inviteFriend", [this.objId, to, data, handlerId]);
        },
-   
+
        /**
         * Reply the friend invite request.
         *
@@ -1069,7 +1069,7 @@
        replyFriendInvite: function (onSuccess, onError, to, status, reason, data) {
            this.process(onSuccess, onError, "replyFriendInvite", [this.objId, to, status, reason, data]);
        },
-   
+
        /**
         * Create a new session to a friend.
         *
@@ -1091,7 +1091,7 @@
            };
            exec(_onSuccess, onError, 'CarrierPlugin', 'newSession', [this.objId, to]);
        },
-   
+
        /**
         * Disconnect carrier node from carrier network, and destroy all associated resources to carreier node instance.
         * After calling the method, the carrier node instance becomes invalid.
@@ -1103,24 +1103,24 @@
            exec(onSuccess, onError, 'CarrierPlugin', 'destroy', [this.objId]);
        }
    }
-   
+
    /**
    * @exports carrierPlugin
    */
    function CarrierPlugin() {
        this.carriers = [];
        this.streams = [];
-   
+
        this.FriendInviteEvent = [];
        this.FriendInviteCount = 0;
        this.SRCEvent = [];
        this.SRCCount = 0;
-   
+
        const CARRIER = 1;
        const SESSION = 2;
        const STREAM = 3;
        const FRIEND_INVITE = 4;
-   
+
        /**
         * @description
         * Carrier node connection status to the carrier network.
@@ -1133,7 +1133,7 @@
            /** There is no connection to the carrier network. */
            DISCONNECTED: 1
        }
-   
+
        /**
         * @description
         * Carrier node presence status.
@@ -1148,7 +1148,7 @@
            /** Carrier node is being busy. */
            BUSY: 2
        }
-   
+
        /**
         * @description
         * Carrier stream type. Reference: https://tools.ietf.org/html/rfc4566#section-5.14 https://tools.ietf.org/html/rfc4566#section-8
@@ -1167,7 +1167,7 @@
            /** Message stream. */
            MESSAGE: 4,
        }
-   
+
        /**
         * @description
         * Carrier stream state The stream state will be changed according to the phase of the stream.
@@ -1192,7 +1192,7 @@
            /** The stream is on error, cannot to continue. */
            ERROR: 7,
        }
-   
+
        /**
         * @description
         * Carrier Stream's candidate type.
@@ -1209,7 +1209,7 @@
            /** Relayed Candidate, only valid to ICE tranport. */
            RELAYED: 3,
        }
-   
+
        /**
         * @description
         * Carrier network topology for session peers related to each other.
@@ -1224,7 +1224,7 @@
            /** Relayed netowrk topology. */
            RELAYED: 2,
        }
-   
+
        /**
         * @description
         * Port forwarding supported protocols.
@@ -1235,7 +1235,7 @@
            /** TCP protocol. */
            TCP: 1,
        }
-   
+
        /**
         * @description
         * Multiplexing channel close reason mode.
@@ -1250,7 +1250,7 @@
            /** Channel closed because error occured. */
            ERROR: 2,
        }
-   
+
        /**
         * @description
         * Carrier stream mode.
@@ -1288,12 +1288,12 @@
             */
            PORT_FORWARDING: 16,
        }
-   
+
        Object.freeze(CarrierPlugin.prototype);
        Object.freeze(Carrier.prototype);
        Object.freeze(Session.prototype);
        Object.freeze(Stream.prototype);
-   
+
        Object.freeze(this.ConnectionStatus);
        Object.freeze(this.PresenceStatus);
        Object.freeze(this.StreamType);
@@ -1303,11 +1303,11 @@
        Object.freeze(this.PortForwardingProtocol);
        Object.freeze(this.CloseReason);
        Object.freeze(this.StreamMode);
-   
+
        exec(function () { }, null, 'CarrierPlugin', 'initVal', []);
-   
+
        var me = this;
-   
+
        this.onCarrierEvent = function (event) {
            event.carrier = me.carriers[event.id];
            if (event.carrier) {
@@ -1320,15 +1320,15 @@
                alert(event.name);
            }
        },
-   
+
        this.onStreamEvent = function (event) {
-           event.stream = me.streams[event.objId];
-           event.objId = null;
+           event.stream = me.streams[event.id];
+           event.id = null;
            if (event.stream && event.stream.callbacks[event.name]) {
                event.stream.callbacks[event.name](event);
            }
        },
-   
+
        //FriendInviteResponseHandler
        this.addFriendInviteResponseCB = function (callback, carrier) {
            me.FriendInviteCount++;
@@ -1337,7 +1337,7 @@
            me.FriendInviteEvent[me.FriendInviteCount].carrier = carrier
            return me.FriendInviteCount;
        },
-   
+
        this.onFriendInviteResponse = function (event) {
            var id = event.id;
            event.id = null;
@@ -1346,7 +1346,7 @@
                me.FriendInviteEvent[id].callback(event);
            }
        };
-   
+
        //SessionRequestCompleteHandler
        this.addSessionRequestCompleteCB = function (callback, session) {
            me.SRCCount++;
@@ -1355,7 +1355,7 @@
            me.SRCEvent[me.SRCCount].session = session
            return me.SRCCount;
        };
-   
+
        this.onSessionRequestComplete = function (event) {
            var id = event.id;
            event.id = null;
@@ -1364,16 +1364,16 @@
                me.SRCEvent[id].callback(event);
            }
        };
-   
+
        this.setListener(CARRIER, this.onCarrierEvent);
        this.setListener(STREAM, this.onStreamEvent);
        this.setListener(FRIEND_INVITE, this.onFriendInviteResponse);
        this.setListener(SESSION, this.onSessionRequestComplete);
    }
-   
+
    CarrierPlugin.prototype = {
        constructor: CarrierPlugin,
-   
+
        bootstraps: [
            { ipv4: "13.58.208.50",  port: "33445", publicKey: "89vny8MrKdDKs7Uta9RdVmspPjnRMdwMmaiEW27pZ7gh" },
            { ipv4: "18.216.102.47", port: "33445", publicKey: "G5z8MqiNDFTadFUPfMdYsYtkUDbX5mNCMVHMZtsCnFeb" },
@@ -1381,17 +1381,17 @@
            { ipv4: "52.83.171.135", port: "33445", publicKey: "5tuHgK1Q4CYf4K5PutsEPK5E3Z7cbtEBdx7LwmdzqXHL" },
            { ipv4: "52.83.191.228", port: "33445", publicKey: "3khtxZo89SBScAMaHhTvD68pPHiKxgZT6hTCSZZVgNEm" }
        ],
-   
+
        options: {
            udpEnabled: true,
            persistentLocation: ".data",
            bootstraps: this.bootstraps
        },
-   
+
        setListener: function (type, eventCallback) {
            exec(eventCallback, null, 'CarrierPlugin', 'setListener', [type]);
        },
-   
+
        /**
         * Get current version of Carrier node.
         *
@@ -1402,7 +1402,7 @@
        getVersion: function (onSuccess, onError) {
            exec(onSuccess, onError, 'CarrierPlugin', 'getVersion', []);
        },
-   
+
        /**
         * Check if the ID is Carrier node id.
         *
@@ -1414,10 +1414,10 @@
            var _onSuccess = function (ret) {
                if (onSuccess) onSuccess(ret == "true" ? true : false);
            };
-   
+
            exec(_onSuccess, onError, 'CarrierPlugin', 'isValidAddress', [id]);
        },
-   
+
        /**
         * Check if the carrier node address is valid.
         *
@@ -1429,10 +1429,10 @@
            var _onSuccess = function (ret) {
                if (onSuccess) onSuccess(ret == "true" ? true : false);
            };
-   
+
            exec(_onSuccess, onError, 'CarrierPlugin', 'isValidAddress', [address]);
        },
-   
+
        /**
         * Get carrier ID from carrier node address.
         *
@@ -1443,7 +1443,7 @@
        getIdFromAddress: function (onSuccess, onError, address) {
            exec(onSuccess, onError, 'CarrierPlugin', 'getIdFromAddress', [address]);
        },
-   
+
        /**
         * Create a carrier object instance. After initializing the instance,
         * it's ready to start and therefore connect to carrier network.
@@ -1470,25 +1470,24 @@
            if (typeof (options) == "undefined" || options == null) {
                options = this.options;
            }
-   
+
            if (typeof (callbacks) != "undefined" && callbacks != null) {
                for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
                    var name = CARRIER_CB_NAMES[i];
                    carrier.callbacks[name] = callbacks[name];
                }
            }
-   
+
            var configString = JSON.stringify(options);
            exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["im", configString]);
        },
-   
+
    }
-   
+
    CarrierPlugin.prototype.test = function (onSuccess, onError, buf) {
        //    var data = base64.fromArrayBuffer(buf);
        exec(onSuccess, onError, 'CarrierPlugin', 'test', [buf]);
    };
-   
-   
+
+
    module.exports = new CarrierPlugin();
-   
