@@ -50,6 +50,10 @@
    ];
 
    /**
+    * @module CarrierPlugin
+    */
+
+   /**
     * The Carrier user information.
     *
     * @typedef BootstrapNode
