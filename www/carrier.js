@@ -1109,7 +1109,7 @@
    }
 
    /**
-   * @exports carrierPlugin
+   * @class CarrierPlugin
    */
    function CarrierPlugin() {
        this.carriers = [];
