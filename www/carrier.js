@@ -36,6 +36,15 @@
        "onFriendMessage",
        "onFriendInviteRequest",
        "onSessionRequest",
+       "onGroupInvite",
+   ];
+
+   const GROUP_CB_NAMES = [
+       "onGroupConnected",
+       "onGroupMessage",
+       "onGroupTitle",
+       "onPeerName",
+       "onPeerListChanged",
    ];
 
    const STREAM_CB_NAMES = [
@@ -750,6 +759,9 @@
             * @param {Carrier}	carrier		Carrier node instance
             * @param {string}  from     	The id from who send the message
             * @param {string}  message   	The message content
+            * @param {Boolean} isOffline  Whether this message sent as online message or
+            *		offline message. The value of true means the message was sent as
+            *		online message, otherwise as offline message.
             */
            onFriendMessage: null,
 
@@ -774,6 +786,16 @@
             * @param {string}  sdp         The remote users SDP. Reference: https://tools.ietf.org/html/rfc4566
             */
            onSessionRequest: null,
+
+           /**
+            * The callback function that handle group invite.
+            *
+            * @callback onGroupInvite
+            *
+            * @param {Carrier}	carrier		 Carrier node instance
+            * @param {string}  groupTitle  Current group title
+            */
+           onGroupInvite: null,
        }
    }
 
@@ -1075,6 +1097,91 @@
        },
 
        /**
+        * Create a new group request.
+        *
+        * This function will create a new group.
+        *
+        * @param {Function} onSuccess  The function to call when success, the param is Group object.
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        */
+       newGroup: function (onSuccess, onError, callbacks) {
+           var _onSuccess = function(ret){
+               var group = new Group();
+               group.groupId = ret.groupId;
+               carrierPlugin.groups[group.groupId] = group;
+
+               if (typeof (callbacks) != "undefined" && callbacks != null) {
+                   for (var i = 0; i < GROUP_CB_NAMES.length; i++) {
+                       var name = GROUP_CB_NAMES[i];
+                       carrierPlugin.groups[group.groupId].callbacks[name] = callbacks[name];
+                   }
+               }
+
+               if (onSuccess) onSuccess(group);
+            };
+           this.process(_onSuccess, onError, "createGroup", [this.objId]);
+       },
+
+       /**
+        * Join a group request.
+        *
+        * Join a group associating with cookie into which remote friend invites.
+        *
+        * @param {Function} onSuccess  The function to call when success, the param is Group object
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {String} friendId	   The friend who send a group invitation
+        * @param {String} cookieCode    The cookieCode information to join group,from onGroupInvite.
+        */
+       groupJoin: function (onSuccess, onError, friendId, cookieCode, callbacks) {
+            var _onSuccess = function(ret){
+                var group = new Group();
+                group.groupId = ret.groupId;
+                carrierPlugin.groups[group.groupId] = group;
+
+                if (typeof (callbacks) != "undefined" && callbacks != null) {
+                    for (var i = 0; i < GROUP_CB_NAMES.length; i++) {
+                        var name = GROUP_CB_NAMES[i];
+                        carrierPlugin.groups[group.groupId].callbacks[name] = callbacks[name];
+                    }
+                }
+
+                if (onSuccess) onSuccess(group);
+            };
+            this.process(_onSuccess, onError, "joinGroup", [this.objId,friendId,cookieCode]);
+       },
+
+       /**
+        * Leave a group request.
+        *
+        * @param {Function} onSuccess  The function to call when success, The param is a String "Success!";
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Object} group	     Group object
+        */
+       groupLeave: function (onSuccess, onError, group) {
+           var _onSuccess = function(ret){
+               delete carrierPlugin.groups[group.groupId];
+               if (onSuccess) onSuccess(group);
+           };
+           this.process(_onSuccess, onError, "leaveGroup", [this.objId,group.groupId]);
+       },
+
+      /**
+       * Get all Groups request.
+       *
+       * @param {Function} onSuccess  The function to call when success.The param is a group array object ,
+       * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+       */
+       getGroups: function (onSuccess, onError) {
+           var groups = [];
+           var index = 0;
+           for(var i in carrierPlugin.groups) {
+               groups[index]=carrierPlugin.groups[i];
+               index = index+1;
+           }
+           if (onSuccess) onSuccess(groups);
+       },
+
+       /**
         * Create a new session to a friend.
         *
         * The session object represent a conversation handle to a friend.
@@ -1108,12 +1215,162 @@
        }
    }
 
+    /**
+    * The class representing Group.
+    * @class
+    */
+    function Group(){
+        this.groupId = null;
+        this.callbacks = {
+           /**
+            * The callback function that handle group connect status.
+            *
+            * @callback onGroupConnected
+            */
+            onGroupConnected: null,
+
+           /**
+            * The callback function that handle group message.
+            *
+            * @callback onGroupMessage
+            * @param {string}  from        The friend's user id.
+            * @param {string}  message     The message content
+            */
+            onGroupMessage: null,
+
+           /**
+            * The callback function that handle group title changed.
+            *
+            * @callback onGroupTitle
+            * @param {string}  from        The User id of the modifier
+            * @param {string}  title       New group title
+            */
+            onGroupTitle: null,
+
+           /**
+            * The callback function that handle peer name changed.
+            *
+            * @callback onPeerName
+            * @param {string}  peerId      The peer's user id.
+            * @param {string}  peerName    The peer's name.
+            */
+            onPeerName: null,
+
+           /**
+            * The callback function that handle peer list changed.
+            *
+            * @callback onPeerListChanged
+            */
+            onPeerListChanged: null,
+        }
+    }
+
+    Group.prototype = {
+       constructor: Group,
+
+        process: function (onSuccess, onError, name, args) {
+            var me = this;
+            var _onSuccess = function (ret) {
+               ret.group = me;
+               if (onSuccess) onSuccess(ret);
+            };
+            exec(_onSuccess, onError, 'CarrierPlugin', name, args);
+        },
+
+       /**
+        * Invite a friend into group request.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is a String "Success!",
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {String} friendId	   The friend's id
+        */
+        invite: function (onSuccess, onError, friendId) {
+            this.process(onSuccess, onError, "inviteGroup", [this.groupId,friendId]);
+        },
+
+       /**
+        * Send a message to a group request.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is a String "Success!",
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {String} message      The message content defined by application
+        */
+        sendMessage: function (onSuccess, onError, message) {
+            this.process(onSuccess, onError, "sendGroupMessage", [this.groupId,message]);
+        },
+
+       /**
+        * Get group title request.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is a String ,
+        *                              group title information
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        */
+        getTitle: function (onSuccess, onError) {
+            var _onSuccess = function(ret){
+                 var title = ret.groupTitle;
+                 if (onSuccess) onSuccess(title);
+            };
+            this.process(_onSuccess, onError, "getGroupTitle", [this.groupId]);
+        },
+
+       /**
+        * Modify group title request.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is a json String ,
+        *                              group title information,
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {String}  groupTitle  New group's title
+        */
+        setTitle: function (onSuccess, onError, groupTitle) {
+            var _onSuccess = function(ret){
+                var title = ret.groupTitle;
+                if (onSuccess) onSuccess(title);
+            };
+            this.process(_onSuccess, onError, "setGroupTitle", [this.groupId,groupTitle]);
+        },
+
+       /**
+        * Get peers from Group request.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is a json String ,
+        *                              group peers information ,
+        *                              like this {"PEER_ID":{"peerName":"PEER_NAME","peerUserId":"PEER_ID"}}.
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        */
+        getPeers: function (onSuccess, onError) {
+            var _onSuccess = function(ret){
+                var peers = ret.peers;
+                if (onSuccess) onSuccess(peers);
+            };
+            this.process(_onSuccess, onError, "getGroupPeers", [this.groupId]);
+        },
+
+       /**
+        * Get a peer from Group request.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is a json String ,
+        *                              a peer information ,
+        *                              like this{"peerName":"PEER_NAME","peerUserId":"PEER_ID"}.
+        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {String}   peerId	  The peer's id
+        */
+        getPeer: function (onSuccess, onError, peerId) {
+            var _onSuccess = function(ret){
+                var peer = ret.peer;
+                if (onSuccess) onSuccess(peer);
+            };
+            this.process(_onSuccess, onError, "getGroupPeer", [this.groupId,peerId]);
+        },
+    }
+
    /**
-   * @class CarrierPlugin
+   * @exports carrierPlugin
    */
    function CarrierPlugin() {
        this.carriers = [];
        this.streams = [];
+       this.groups = {};
 
        this.FriendInviteEvent = [];
        this.FriendInviteCount = 0;
@@ -1124,6 +1381,7 @@
        const SESSION = 2;
        const STREAM = 3;
        const FRIEND_INVITE = 4;
+       const GROUP = 5 ;
 
        /**
         * @description
@@ -1297,6 +1555,7 @@
        Object.freeze(Carrier.prototype);
        Object.freeze(Session.prototype);
        Object.freeze(Stream.prototype);
+       Object.freeze(Group.prototype);
 
        Object.freeze(this.ConnectionStatus);
        Object.freeze(this.PresenceStatus);
@@ -1351,6 +1610,19 @@
            }
        };
 
+       //onGroupHandlerCallback
+       this.onGroupEvent = function(event){
+       var group = me.groups[event.groupId];
+           if (group) {
+               if (group.callbacks[event.name]) {
+                   group.callbacks[event.name](event);
+               }
+           }
+           else {
+               alert(event.name);
+           }
+      }
+
        //SessionRequestCompleteHandler
        this.addSessionRequestCompleteCB = function (callback, session) {
            me.SRCCount++;
@@ -1373,6 +1645,7 @@
        this.setListener(STREAM, this.onStreamEvent);
        this.setListener(FRIEND_INVITE, this.onFriendInviteResponse);
        this.setListener(SESSION, this.onSessionRequestComplete);
+       this.setListener(GROUP, this.onGroupEvent);
    }
 
    CarrierPlugin.prototype = {
@@ -1460,6 +1733,7 @@
                carrier._presence = ret.presence;
                carrier.carrierPlugin = me;
                me.carriers[carrier.objId] = carrier;
+
                if (onSuccess) onSuccess(carrier);
            };
            if (typeof (options) == "undefined" || options == null) {
@@ -1484,5 +1758,6 @@
        exec(onSuccess, onError, 'CarrierPlugin', 'test', [buf]);
    };
 
-
    module.exports = new CarrierPlugin();
+
+
