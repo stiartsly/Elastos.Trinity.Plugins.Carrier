@@ -37,6 +37,7 @@
        "onFriendInviteRequest",
        "onSessionRequest",
        "onGroupInvite",
+       "onConnectRequest",
    ];
 
    const GROUP_CB_NAMES = [
@@ -45,6 +46,17 @@
        "onGroupTitle",
        "onPeerName",
        "onPeerListChanged",
+   ];
+
+   const FILE_TRANSFER_CB_NAMES = [
+       "onStateChanged",
+       "onFileRequest",
+       "onPullRequest",
+       "onData",
+       "onDataFinished",
+       "onPending",
+       "onResume",
+       "onCancel",
    ];
 
    const STREAM_CB_NAMES = [
@@ -124,6 +136,16 @@
     */
 
     /**
+    * The file transfer information.
+    *
+    * @typedef FileTransferInfo
+    * @type {Object}
+    * @property {string}  filename    The file name.
+    * @property {string}  fileId      The file id.
+    * @property {long}    size        The file size.
+    */
+
+    /**
     * The netword transport information.
     *
     * @typedef TransportInfo
@@ -173,10 +195,10 @@
     *
     * @callback onFriendInviteResponse
     *
-    * @param {string}  from		The target user id who send friend invite response
-    * @param {number}  status		The status code of invite response. 0 is success, otherwise error
-    * @param {string}  reason		The error message if status is error, otherwise null
-    * @param {string}  data		The application defined data return by target user
+    * @param {string}  from   The target user id who send friend invite response
+    * @param {number}  status   The status code of invite response. 0 is success, otherwise error
+    * @param {string}  reason   The error message if status is error, otherwise null
+    * @param {string}  data   The application defined data return by target user
     */
 
    /**
@@ -334,7 +356,7 @@
        /**
         * Get tranport info of carrier stream.
         * @param {Function} onSuccess  The function to call when success, the param is a TransportInfo object
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
        getTransportInfo: function (onSuccess, onError) {
            this.process(onSuccess, onError, "getTransportInfo", [this.objId]);
@@ -345,7 +367,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Number: Bytes of data sent.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {base64}   data      The send data.
         */
        write: function (onSuccess, onError, data) {
@@ -357,7 +379,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Number: New channel ID.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   cookie    The application defined data passed to remote peer
         */
        openChannel: function (onSuccess, onError, cookie) {
@@ -369,7 +391,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number}   channel   The channel ID to close
         */
        closeChannel: function (onSuccess, onError, channel) {
@@ -381,7 +403,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Number: Bytes of data sent.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number} channel     The current channel ID.
         * @param {base64} data        The send data.
         */
@@ -394,7 +416,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number} channel     The current channel ID.
         */
        pendChannel: function (onSuccess, onError, channel) {
@@ -406,7 +428,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number} channel     The current channel ID.
         */
        resumeChannel: function (onSuccess, onError, channel) {
@@ -418,7 +440,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Number: Port forwarding ID.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   service   The remote service name
         * @param {PortForwardingProtocol}  protocol    Port forwarding protocol
         * @param {string}   host      Local host or ip to binding. If host is null, port forwarding will bind to localhost
@@ -433,7 +455,7 @@
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number}   portForwarding  The portforwarding ID.
         */
        closePortForwarding: function (onSuccess, onError, portForwarding) {
@@ -479,8 +501,8 @@
        // /**
        //  * Get remote peer id.
        //  *
-       //  * @param {Function} onSuccess  The function to call when success, the param is a String: The remote peer userid.
-       //  * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+       //  * @param {Function} onSuccess  The function to call when success, the param is a string: The remote peer userid.
+       //  * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
        //  */
        // getPeer: function (onSuccess, onError) {
        //     this.process(onSuccess, onError, "getPeer", [this.objId]);
@@ -490,7 +512,7 @@
         * Send session request to the friend.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {onSessionRequestComplete} handler A handler to the SessionRequestCompleteHandler to receive the session response
         */
        request: function (onSuccess, onError, handler) {
@@ -507,7 +529,7 @@
         * This function will send a session response to friend.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number}   status     The status code of the response. 0 is success, otherwise is error
         * @param {string}   reason     The error message if status is error, or null if success
         */
@@ -522,7 +544,7 @@
         * The stream status will update to application by stream's StreamHandler.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   sdp        The remote user's SDP.  Reference: https://tools.ietf.org/html/rfc4566
         */
        start: function (onSuccess, onError, sdp) {
@@ -543,7 +565,7 @@
         *  Multiplexing over UDP can not provide reliable transport.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Stream object: The new added carrier stream.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {StreamType} type     The stream type defined in StreamType
         * @param {number}   options    The stream mode options. options are constructed by a bitwise-inclusive OR of flags
         * @param {StreamCallbacks} callbacks The stream callbacks.
@@ -576,7 +598,7 @@
         * Remove a stream from session.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {stream}   stream     The Stream to be removed
         */
        removeStream: function (onSuccess, onError, stream) {
@@ -601,7 +623,7 @@
         * The registered services can be used by remote peer in portforwarding request.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   service   The new service name, should be unique in session scope.
         * @param {PortForwardingProtocol}  protocol    The protocol of the service.
         * @param {string}   host      The host name or ip of the service.
@@ -617,7 +639,7 @@
         * This function has not effect on existing portforwarings.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   service    The service name.
         */
        removeService: function (onSuccess, onError, service) {
@@ -649,8 +671,8 @@
             *
             *@callback onConnection
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {number}  status 		Current connection status. @see ConnectionStatus
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {number}  status     Current connection status. @see ConnectionStatus
             */
            onConnection: null,
 
@@ -662,7 +684,7 @@
             *
             * @callback onReady
             *
-            * @param {Carrier}	carrier		Carrier node instance
+            * @param {Carrier}  carrier   Carrier node instance
             */
            onReady: null,
 
@@ -671,8 +693,8 @@
             *
             * @callback onSelfInfoChanged
             *
-            * @param {Carrier}	 carrier	Carrier node instance
-            * @param {UserInfo} userInfo 	The updated user information
+            * @param {Carrier}   carrier  Carrier node instance
+            * @param {UserInfo} userInfo  The updated user information
             */
            onSelfInfoChanged: null,
 
@@ -681,8 +703,8 @@
             *
             * @callback onFriends
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {Array}   friends 	The friends list.
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {Array}   friends  The friends list.
             */
            onFriends: null,
 
@@ -691,9 +713,9 @@
             *
             * @callback onFriendConnection
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {string}  friendId 	The friend's user id.
-            * @param {number}  status	    The connection status of friend. @see ConnectionStatus
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {string}  friendId   The friend's user id.
+            * @param {number}  status     The connection status of friend. @see ConnectionStatus
             */
            onFriendConnection: null,
 
@@ -702,9 +724,9 @@
             *
             * @callback onFriendInfoChanged
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {string}  friendId   	The friend's user id
-            * @param {FriendInfo}  info	The update friend information
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {string}  friendId     The friend's user id
+            * @param {FriendInfo}  info The update friend information
             */
            onFriendInfoChanged: null,
 
@@ -713,9 +735,9 @@
             *
             * @callback onFriendPresence
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {string}  friendId   	The friend's user id
-            * @param {number}  presence	The presence status of the friend
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {string}  friendId     The friend's user id
+            * @param {number}  presence The presence status of the friend
             */
            onFriendPresence: null,
 
@@ -724,9 +746,9 @@
             *
             * @callback onFriendRequest
             *
-            * @param {Carrier}	 carrier	Carrier node instance
-            * @param {string}   userId    	The user id who want be friend with current user
-            * @param {UserInfo} info		The user information to `userId`
+            * @param {Carrier}   carrier  Carrier node instance
+            * @param {string}   userId      The user id who want be friend with current user
+            * @param {UserInfo} info    The user information to `userId`
             * @param {string}   hello      The PIN for target user, or any application defined content
             */
            onFriendRequest: null,
@@ -736,8 +758,8 @@
             *
             * @callback onFriendAdded
             *
-            * @param {Carrier}	    carrier		Carrier node instance
-            * @param {FriendInfo}  friendInfo	The added friend's information
+            * @param {Carrier}      carrier   Carrier node instance
+            * @param {FriendInfo}  friendInfo The added friend's information
             */
            onFriendAdded: null,
 
@@ -746,8 +768,8 @@
             *
             * @callback onFriendRemoved
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {string}  friendId   	The friend's user id
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {string}  friendId     The friend's user id
             */
            onFriendRemoved: null,
 
@@ -756,12 +778,12 @@
             *
             * @callback onFriendMessage
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {string}  from     	The id from who send the message
-            * @param {string}  message   	The message content
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {string}  from       The id from who send the message
+            * @param {string}  message    The message content
             * @param {Boolean} isOffline  Whether this message sent as online message or
-            *		offline message. The value of true means the message was sent as
-            *		online message, otherwise as offline message.
+            *   offline message. The value of true means the message was sent as
+            *   online message, otherwise as offline message.
             */
            onFriendMessage: null,
 
@@ -770,9 +792,9 @@
             *
             * @callback onFriendInviteRequest
             *
-            * @param {Carrier}	carrier		Carrier node instance
-            * @param {string}  from       	The user id from who send the invite request
-            * @param {string}  data       	The application defined data sent from friend
+            * @param {Carrier}  carrier   Carrier node instance
+            * @param {string}  from         The user id from who send the invite request
+            * @param {string}  data         The application defined data sent from friend
             */
            onFriendInviteRequest: null,
 
@@ -781,7 +803,7 @@
             *
             * @callback onSessionRequest
             *
-            * @param {Carrier}	carrier		Carrier node instance
+            * @param {Carrier}  carrier   Carrier node instance
             * @param {string}  from        The id who send the message
             * @param {string}  sdp         The remote users SDP. Reference: https://tools.ietf.org/html/rfc4566
             */
@@ -792,10 +814,21 @@
             *
             * @callback onGroupInvite
             *
-            * @param {Carrier}	carrier		 Carrier node instance
+            * @param {Carrier}  carrier    Carrier node instance
             * @param {string}  groupTitle  Current group title
             */
            onGroupInvite: null,
+
+           /**
+            * An callback function that handle file transfer connect request.
+            *
+            * @callback onConnectRequest
+            *
+            * @param {Carrier} carrier     Carrier node instance
+            * @param {string}  from        The id who send the request
+            * @param {FileTransferInfo} fileInfo    Information of the file which the requester wants to send
+            */
+           onConnectRequest: null,
        }
    }
 
@@ -861,7 +894,7 @@
         * to network is successful, carrier node starts working.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {number}   iterateInterval Internal loop interval, in milliseconds.
         */
        start: function (onSuccess, onError, iterateInterval) {
@@ -873,7 +906,7 @@
         * Get self user information.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a UserInfo: the user information to the carrier node.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
        getSelfInfo: function (onSuccess, onError) {
            this.process(onSuccess, onError, "getSelfInfo", [this.objId]);
@@ -885,7 +918,7 @@
         * to carrier network, and thereupon network broadcasts the change to all friends.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {UserInfo} userinfo   The user information to update for this carrier node.
         */
        setSelfInfo: function (onSuccess, onError, name, value) {
@@ -901,7 +934,7 @@
        //  * request.
        //  *
        //  * @param {Function} onSuccess  The function to call when success, the param is a Number: nospam.
-       //  * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+       //  * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
        //  */
        // getNospam: function (onSuccess, onError) {
        //     this.process(onSuccess, onError, "getNospam", [this.objId]);
@@ -915,8 +948,8 @@
        //  * request.
        //  *
        //  * @param {Function} onSuccess  The function to call when success.
-       //  * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-       //  * @param {number}   nospam 	An integer value.
+       //  * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+       //  * @param {number}   nospam   An integer value.
        //  */
        // setNospam: function (onSuccess, onError, nospam) {
        //     this.process(onSuccess, onError, "setNospam", [this.objId, nospam]);
@@ -926,7 +959,7 @@
        //  * Get self presence status.
        //  *
        //  * @param {Function} onSuccess  The function to call when success, the param is a Number: presence status.
-       //  * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+       //  * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
        //  */
        // getPresence: function (onSuccess, onError) {
        //     this.process(onSuccess, onError, "getPresence", [this.objId]);
@@ -936,7 +969,7 @@
        //  * Update self presence status.
        //  *
        //  * @param {Function} onSuccess  The function to call when success.
-       //  * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+       //  * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
        //  * @param {number}   presence   the new presence status.
        //  */
        // setPresence: function (onSuccess, onError, presence) {
@@ -950,7 +983,7 @@
         * is being ready.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Boolean: true if the carrier node instance is ready, or false if not.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
        isReady: function (onSuccess, onError) {
            this.process(onSuccess, onError, "isReady", [this.objId]);
@@ -960,7 +993,7 @@
         * Get friends list.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a {friendId: info} Object: The list of friend information to current user.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
        getFriends: function (onSuccess, onError) {
            this.process(onSuccess, onError, "getFriends", [this.objId]);
@@ -970,8 +1003,8 @@
         * Get specified friend information.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a FriendInfo: The friend information.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   userId		The user identifier of friend
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   userId    The user identifier of friend
         */
        getFriend: function (onSuccess, onError, userId) {
            this.process(onSuccess, onError, "getFriend", [this.objId, userId]);
@@ -984,9 +1017,9 @@
         * seen by current user only, and has no impact to the target friend itself.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   userId		The friend's user identifier
-        * @param {string}   label		The new label of specified friend
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   userId    The friend's user identifier
+        * @param {string}   label   The new label of specified friend
         */
        labelFriend: function (onSuccess, onError, userId, label) {
            this.process(onSuccess, onError, "labelFriend", [this.objId, userId, label]);
@@ -996,8 +1029,8 @@
         * Check if the user ID is friend.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Boolean: True if the user is a friend, or false if not.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   userId 	The userId to check.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   userId  The userId to check.
         */
        isFriend: function (onSuccess, onError, userId, label) {
            this.process(onSuccess, onError, "isFriend", [this.objId, userId]);
@@ -1010,9 +1043,9 @@
         * send a friend request to the target node.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   address 	the target user address of remote carrier node.
-        * @param {string}   hello 	 	PIN for target user, or any application defined content.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   address   the target user address of remote carrier node.
+        * @param {string}   hello     PIN for target user, or any application defined content.
         */
        addFriend: function (onSuccess, onError, address, hello) {
            this.process(onSuccess, onError, "addFriend", [this.objId, address, hello]);
@@ -1024,8 +1057,8 @@
         * This function is used to add a friend in response to a friend request.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   userId 	The user id who want be friend with us.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   userId  The user id who want be friend with us.
         */
        acceptFriend: function (onSuccess, onError, userId) {
            this.process(onSuccess, onError, "acceptFriend", [this.objId, userId]);
@@ -1037,8 +1070,8 @@
         * This function will remove a friend on this carrier node.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   userId	    The target user id to remove friendship
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   userId      The target user id to remove friendship
         */
        removeFriend: function (onSuccess, onError, userId) {
            this.process(onSuccess, onError, "removeFriend", [this.objId, userId]);
@@ -1052,9 +1085,9 @@
         * and sent as separate messages. Other nodes can reassemble the fragments.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   to 		The target id
-        * @param {string}   message	The message content defined by application
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   to    The target id
+        * @param {string}   message The message content defined by application
         */
        sendFriendMessage: function (onSuccess, onError, to, message) {
            this.process(onSuccess, onError, "sendFriendMessage", [this.objId, to, message]);
@@ -1067,10 +1100,10 @@
         * request, and the data will send to target friend.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   to			The target id
-        * @param {string}   data 		The application defined data send to target user
-        * @param {onFriendInviteResponse}   handler	The handler to receive invite reponse
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   to      The target id
+        * @param {string}   data    The application defined data send to target user
+        * @param {onFriendInviteResponse}   handler The handler to receive invite reponse
         */
        inviteFriend: function (onSuccess, onError, to, data, handler) {
            var handlerId = 0;
@@ -1086,11 +1119,11 @@
         * This function will send a invite response to friend.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   to			The id who send invite request
-        * @param {number}   status		The status code of the response. 0 is success, otherwise is error
-        * @param {string}   reason		The error message if status is error, or null if success
-        * @param {string}   data		The application defined data send to target user. If the status is error, this will be ignored
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   to      The id who send invite request
+        * @param {number}   status    The status code of the response. 0 is success, otherwise is error
+        * @param {string}   reason    The error message if status is error, or null if success
+        * @param {string}   data    The application defined data send to target user. If the status is error, this will be ignored
         */
        replyFriendInvite: function (onSuccess, onError, to, status, reason, data) {
            this.process(onSuccess, onError, "replyFriendInvite", [this.objId, to, status, reason, data]);
@@ -1102,7 +1135,7 @@
         * This function will create a new group.
         *
         * @param {Function} onSuccess  The function to call when success, the param is Group object.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
        newGroup: function (onSuccess, onError, callbacks) {
            var _onSuccess = function(ret){
@@ -1128,9 +1161,9 @@
         * Join a group associating with cookie into which remote friend invites.
         *
         * @param {Function} onSuccess  The function to call when success, the param is Group object
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {String} friendId	   The friend who send a group invitation
-        * @param {String} cookieCode    The cookieCode information to join group,from onGroupInvite.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string} friendId     The friend who send a group invitation
+        * @param {string} cookieCode    The cookieCode information to join group,from onGroupInvite.
         */
        groupJoin: function (onSuccess, onError, friendId, cookieCode, callbacks) {
             var _onSuccess = function(ret){
@@ -1153,9 +1186,9 @@
        /**
         * Leave a group request.
         *
-        * @param {Function} onSuccess  The function to call when success, The param is a String "Success!";
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {Object} group	     Group object
+        * @param {Function} onSuccess  The function to call when success, The param is a string "Success!";
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {Object} group      Group object
         */
        groupLeave: function (onSuccess, onError, group) {
            var _onSuccess = function(ret){
@@ -1169,7 +1202,7 @@
        * Get all Groups request.
        *
        * @param {Function} onSuccess  The function to call when success.The param is a group array object ,
-       * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+       * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
        */
        getGroups: function (onSuccess, onError) {
            var groups = [];
@@ -1182,12 +1215,52 @@
        },
 
        /**
+        * Create a new file transfer to a friend.
+        *
+        * The file transfer object represent a conversation handle to a friend.
+        *
+        * @param {Function} onSuccess  The function to call when success.The param is fileTransfer instance,
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   to         The target id(userid or userid@nodeid).
+        * @param {FileTransferInfo} fileTransferInfo    Information of the file to be transferred.
+        */
+        newFileTransfer: function (onSuccess, onError, to , fileTransferInfo , callbacks) {
+            var _onSuccess = function(ret){
+                var fileTransfer = new FileTransfer();
+                fileTransfer.fileTransferId = ret.fileTransferId;
+                carrierPlugin.fileTransfers[fileTransfer.fileTransferId] = fileTransfer;
+
+                if (typeof (callbacks) != "undefined" && callbacks != null) {
+                    for (var i = 0; i < FILE_TRANSFER_CB_NAMES.length; i++) {
+                        var name = FILE_TRANSFER_CB_NAMES[i];
+                        carrierPlugin.fileTransfers[fileTransfer.fileTransferId].callbacks[name] = callbacks[name];
+                    }
+                }
+                if (onSuccess) onSuccess(fileTransfer);
+            };
+            this.process(_onSuccess, onError, "newFileTransfer", [this.objId,to,fileTransferInfo]);
+        },
+
+        /**
+         * Generate unique file identifier with random algorithm.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is fileId,
+         *
+         */
+        generateFileId: function (onSuccess) {
+            var _onSuccess = function(ret){
+                if (onSuccess) onSuccess(ret.fileId);
+            };
+            this.process(_onSuccess,null, "generateFileTransFileId", []);
+        },
+
+       /**
         * Create a new session to a friend.
         *
         * The session object represent a conversation handle to a friend.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Session Object: The new Session object
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   to         The target id(userid or userid@nodeid).
         */
        newSession: function (onSuccess, onError, to) {
@@ -1208,7 +1281,7 @@
         * After calling the method, the carrier node instance becomes invalid.
         *
         * @param {Function} onSuccess  The function to call when success.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
        destroy: function (onSuccess, onError) {
            exec(onSuccess, onError, 'CarrierPlugin', 'destroy', [this.objId]);
@@ -1226,6 +1299,8 @@
             * The callback function that handle group connect status.
             *
             * @callback onGroupConnected
+            *
+            * @param {Group} group      The group instance .
             */
             onGroupConnected: null,
 
@@ -1233,6 +1308,8 @@
             * The callback function that handle group message.
             *
             * @callback onGroupMessage
+            *
+            * @param {Group} group      The group instance .
             * @param {string}  from        The friend's user id.
             * @param {string}  message     The message content
             */
@@ -1242,6 +1319,8 @@
             * The callback function that handle group title changed.
             *
             * @callback onGroupTitle
+            *
+            * @param {Group} group      The group instance .
             * @param {string}  from        The User id of the modifier
             * @param {string}  title       New group title
             */
@@ -1251,6 +1330,8 @@
             * The callback function that handle peer name changed.
             *
             * @callback onPeerName
+            *
+            * @param {Group} group      The group instance .
             * @param {string}  peerId      The peer's user id.
             * @param {string}  peerName    The peer's name.
             */
@@ -1260,6 +1341,8 @@
             * The callback function that handle peer list changed.
             *
             * @callback onPeerListChanged
+            *
+            * @param {Group} group      The group instance .
             */
             onPeerListChanged: null,
         }
@@ -1280,9 +1363,9 @@
        /**
         * Invite a friend into group request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a String "Success!",
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {String} friendId	   The friend's id
+        * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string} friendId     The friend's id
         */
         invite: function (onSuccess, onError, friendId) {
             this.process(onSuccess, onError, "inviteGroup", [this.groupId,friendId]);
@@ -1291,9 +1374,9 @@
        /**
         * Send a message to a group request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a String "Success!",
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {String} message      The message content defined by application
+        * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string} message      The message content defined by application
         */
         sendMessage: function (onSuccess, onError, message) {
             this.process(onSuccess, onError, "sendGroupMessage", [this.groupId,message]);
@@ -1302,9 +1385,9 @@
        /**
         * Get group title request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a String ,
+        * @param {Function} onSuccess  The function to call when success.The param is a string ,
         *                              group title information
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
         getTitle: function (onSuccess, onError) {
             var _onSuccess = function(ret){
@@ -1317,10 +1400,10 @@
        /**
         * Modify group title request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a json String ,
+        * @param {Function} onSuccess  The function to call when success.The param is a json string ,
         *                              group title information,
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {String}  groupTitle  New group's title
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}  groupTitle  New group's title
         */
         setTitle: function (onSuccess, onError, groupTitle) {
             var _onSuccess = function(ret){
@@ -1333,10 +1416,10 @@
        /**
         * Get peers from Group request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a json String ,
+        * @param {Function} onSuccess  The function to call when success.The param is a json string ,
         *                              group peers information ,
         *                              like this {"PEER_ID":{"peerName":"PEER_NAME","peerUserId":"PEER_ID"}}.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         */
         getPeers: function (onSuccess, onError) {
             var _onSuccess = function(ret){
@@ -1349,11 +1432,11 @@
        /**
         * Get a peer from Group request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a json String ,
+        * @param {Function} onSuccess  The function to call when success.The param is a json string ,
         *                              a peer information ,
         *                              like this{"peerName":"PEER_NAME","peerUserId":"PEER_ID"}.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {String}   peerId	  The peer's id
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   peerId    The peer's id
         */
         getPeer: function (onSuccess, onError, peerId) {
             var _onSuccess = function(ret){
@@ -1364,6 +1447,281 @@
         },
     }
 
+    /**
+     * The class representing FileTransfer.
+     * @class
+     */
+    function FileTransfer(){
+        this.fileTransferId = null;
+        this.FileTransferState = {
+          /** The file transfer connection is initialized. */
+          Initialized: 1,
+
+          /** The file transfer connection is connecting.*/
+          Connecting: 2,
+
+          /** The file transfer connection has been established. */
+          Connected: 3,
+
+          /** The file transfer connection is closed and disconnected. */
+          Closed: 4,
+
+          /** The file transfer connection failed with some reason. */
+          Failed: 5
+        }
+        this.callbacks = {
+
+            /**
+             * The callback function that handle the state changed event.
+             * An application-defined function that handle the state changed event.
+             *
+             * @callback onStateChanged
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {FileTransferState} state     The file transfer connection state.
+             */
+            onStateChanged: null,
+
+            /**
+             * An application-defined function that handle transfer file request event.
+             *
+             * @callback onFileRequest
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId    The file identifier.
+             * @param {string} filename  The file name.
+             * @param {Long}   size      The total file size.
+             */
+            onFileRequest: null,
+
+
+            /**
+             * An application-defined function that handle file transfer pull request
+             * event.
+             *
+             * @callback onPullRequest
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId  The unique identifier of transferring file.
+             * @param {string} offset  The offset of file where transfer begins.
+             */
+            onPullRequest: null,
+
+            /**
+             * An application-defined function that perform receiving data.
+             *
+             * @callback onData
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId  The unique identifier of transferring file.
+             * @param {string} data    The received data.
+             */
+            onData: null,
+
+            /**
+             * An application-defined function that handles the event of end of receiving data.
+             *
+             * @callback onDataFinished
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId  The unique identifier of transferring file.
+             */
+            onDataFinished: null,
+
+            /**
+             * An application-defined function that handles pause file transfer
+             * notification from the peer.
+             *
+             * @callback onPending
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId  The unique identifier of transferring file.
+             */
+            onPending: null,
+
+            /**
+             * An application-defined function that handles resume file transfer
+             * notification from the peer.
+             *
+             * @callback onResume
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId  The unique identifier of transferring file.
+             */
+            onResume: null,
+
+            /**
+             * An application-defined function that handles cancel file transfer
+             * notification from the peer.
+             *
+             * @callback onCancel
+             *
+             * @param {FileTransfer} fileTransfer   The fileTransfer instance .
+             * @param {string} fileId  The unique identifier of transferring file.
+             * @param {int}    status  Cancel transfer status code.
+             * @param {string} reason  Cancel transfer reason.
+             */
+            onCancel: null,
+        }
+    }
+
+    FileTransfer.prototype = {
+       constructor: FileTransfer,
+
+        process: function (onSuccess, onError, name, args) {
+            var me = this;
+            var _onSuccess = function (ret) {
+               ret.fileTransfer = me;
+               if (onSuccess) onSuccess(ret);
+            };
+            exec(_onSuccess, onError, 'CarrierPlugin', name, args);
+        },
+
+        /**
+         * Close file transfer instance.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         *
+         */
+        close: function (onSuccess, onError) {
+            this.process(onSuccess, onError, "closeFileTrans", [this.fileTransferId]);
+        },
+
+        /**
+         * Get an unique file identifier of specified file.
+         * Each file has its unique file id used between two peers.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is fileId,
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   filename   The target file name.
+         *
+         */
+        getFileId: function (onSuccess, onError, filename) {
+            var _onSuccess = function (ret) {
+               var fileId = ret.fileId;
+               if (onSuccess) onSuccess(fileId);
+            };
+            this.process(_onSuccess, onError, "getFileTransFileId", [this.fileTransferId,filename]);
+        },
+
+        /**
+         * Get file name by file id.
+         * Each file has its unique file id used between two peers.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is filename,
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The target file identifier.
+         */
+        getFileName: function (onSuccess, onError, fileId) {
+            var _onSuccess = function (ret) {
+               var filename = ret.filename;
+               if (onSuccess) onSuccess(filename);
+            };
+            this.process(_onSuccess, onError, "getFileTransFileName", [this.fileTransferId,fileId]);
+        },
+
+        /**
+         * Send a file transfer connect request to target peer.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         *
+         */
+        connect: function (onSuccess, onError) {
+            this.process(onSuccess, onError, "fileTransConnect", [this.fileTransferId]);
+        },
+
+        /**
+         * Accept file transfer connection request.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         *
+         */
+        acceptConnect: function (onSuccess, onError) {
+            this.process(onSuccess, onError, "acceptFileTransConnect", [this.fileTransferId]);
+        },
+
+        /**
+         * Add a file to queue of file transfer.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {Object} fileinfo  Information of the file to be added.
+         */
+        addFile: function (onSuccess, onError, fileInfo) {
+            this.process(onSuccess, onError, "addFileTransFile", [this.fileTransferId,fileInfo]);
+        },
+
+        /**
+         * To send pull request to transfer file with specified fileId.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The file identifier.
+         * @param {Long}     offset     The offset of file where transfer begins.
+         */
+        pullData: function (onSuccess, onError,fileId,offset) {
+            this.process(onSuccess, onError, "pullFileTransData", [this.fileTransferId,fileId,offset]);
+        },
+
+        /**
+         * To transfer file data with specified fileId.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The file identifier.
+         * @param {string}   data       The data to transfer for file.
+         */
+        writeData: function (onSuccess, onError,fileId,data) {
+            this.process(onSuccess, onError, "writeFileTransData", [this.fileTransferId,fileId,data]);
+        },
+
+        /**
+         * Finish transferring file with specified fileId(only available to sender).
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The file identifier.
+         */
+        sendFinish: function (onSuccess, onError, fileId) {
+            this.process(onSuccess, onError, "sendFileTransFinish", [this.fileTransferId,fileId]);
+        },
+
+        /**
+         * Cancel transferring file with specified fileId(only available to receiver).
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The file identifier.
+         */
+        cancelTransfer: function (onSuccess, onError, fileId , status , reason) {
+            this.process(onSuccess, onError, "cancelFileTrans", [this.fileTransferId, fileId , status , reason]);
+        },
+
+        /**
+         * Pend transferring file with specified fileId.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The file identifier.
+         */
+        pendTransfer: function (onSuccess, onError, fileId) {
+            this.process(onSuccess, onError, "pendFileTrans", [this.fileTransferId , fileId]);
+        },
+
+        /**
+         * Resume transferring file with specified fileId.
+         *
+         * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param {string}   fileId     The file identifier.
+         */
+        resumeTransfer: function (onSuccess, onError, fileId) {
+            this.process(onSuccess, onError, "resumeFileTrans", [this.fileTransferId , fileId]);
+        },
+    }
+
    /**
    * @exports carrierPlugin
    */
@@ -1371,6 +1729,7 @@
        this.carriers = [];
        this.streams = [];
        this.groups = {};
+       this.fileTransfers = {};
 
        this.FriendInviteEvent = [];
        this.FriendInviteCount = 0;
@@ -1382,6 +1741,7 @@
        const STREAM = 3;
        const FRIEND_INVITE = 4;
        const GROUP = 5 ;
+       const FILE_TRANSFER = 6 ;
 
        /**
         * @description
@@ -1556,6 +1916,7 @@
        Object.freeze(Session.prototype);
        Object.freeze(Stream.prototype);
        Object.freeze(Group.prototype);
+       Object.freeze(FileTransfer.prototype);
 
        Object.freeze(this.ConnectionStatus);
        Object.freeze(this.PresenceStatus);
@@ -1608,20 +1969,31 @@
                event.carrier = me.FriendInviteEvent[id].carrier;
                me.FriendInviteEvent[id].callback(event);
            }
-       };
+       },
 
-       //onGroupHandlerCallback
-       this.onGroupEvent = function(event){
-       var group = me.groups[event.groupId];
-           if (group) {
-               if (group.callbacks[event.name]) {
-                   group.callbacks[event.name](event);
-               }
-           }
-           else {
-               alert(event.name);
-           }
-      }
+        //onGroupHandlerCallback
+        this.onGroupEvent = function(event){
+            var group = me.groups[event.groupId];
+            if (group) {
+                if (group.callbacks[event.name]) {
+                    group.callbacks[event.name](event);
+                }
+            }else {
+                alert(event.name);
+            }
+        },
+
+        //onFileTransferHandlerCallback
+        this.onFileTransferEvent = function(event){
+            var fileTransfer = me.fileTransfers[event.fileTransferId];
+            if (fileTransfer) {
+                if (fileTransfer.callbacks[event.name]) {
+                    fileTransfer.callbacks[event.name](event);
+                }
+            }else {
+                alert(event.name);
+            }
+        }
 
        //SessionRequestCompleteHandler
        this.addSessionRequestCompleteCB = function (callback, session) {
@@ -1646,6 +2018,7 @@
        this.setListener(FRIEND_INVITE, this.onFriendInviteResponse);
        this.setListener(SESSION, this.onSessionRequestComplete);
        this.setListener(GROUP, this.onGroupEvent);
+       this.setListener(FILE_TRANSFER, this.onFileTransferEvent);
    }
 
    CarrierPlugin.prototype = {
@@ -1663,8 +2036,8 @@
        /**
         * Get current version of Carrier node.
         *
-        * @param {Function} onSuccess  The function to call when success, the param is a String: The version of carrier node.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} onSuccess  The function to call when success, the param is a string: The version of carrier node.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {callback} onSuccess  The version of carrier node
         */
        getVersion: function (onSuccess, onError) {
@@ -1675,8 +2048,8 @@
         * Check if the ID is Carrier node id.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Boolean: True if id is valid, otherwise false.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {string}   id		   The carrier node id to be check.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {string}   id       The carrier node id to be check.
         */
        isValidId: function (onSuccess, onError, id) {
            var _onSuccess = function (ret) {
@@ -1690,7 +2063,7 @@
         * Check if the carrier node address is valid.
         *
         * @param {Function} onSuccess  The function to call when success, the param is a Boolean: True if key is valid, otherwise false.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   address    The carrier node address to be check.
         */
        isValidAddress: function (onSuccess, onError, address) {
@@ -1704,8 +2077,8 @@
        /**
         * Get carrier ID from carrier node address.
         *
-        * @param {Function} onSuccess  The function to call when success, the param is a String: User id if address is valid, otherwise null.
-        * @param {Function} [onError]  The function to call when error, the param is a String. Or set to null.
+        * @param {Function} onSuccess  The function to call when success, the param is a string: User id if address is valid, otherwise null.
+        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string}   address    The carrier node address.
         */
        getIdFromAddress: function (onSuccess, onError, address) {
@@ -1717,8 +2090,8 @@
         * it's ready to start and therefore connect to carrier network.
         *
         * @param {Function}  onSuccess  The function to call when success.
-        * @param {Function}  [onError]  The function to call when error, the param is a String. Or set to null.
-        * @param {Options}   [options]	 The options to set for creating carrier node. If set to null, will use default.
+        * @param {Function}  [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {Options}   [options]   The options to set for creating carrier node. If set to null, will use default.
         * @param {CarrierCallbacks} callbacks The callbacks for carrier node.
         */
        createObject: function (onSuccess, onError, options, callbacks) {
@@ -1747,8 +2120,8 @@
                }
            }
 
-           var configString = JSON.stringify(options);
-           exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["im", configString]);
+           var configstring = JSON.stringify(options);
+           exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["im", configstring]);
        },
 
    }
@@ -1759,5 +2132,4 @@
    };
 
    module.exports = new CarrierPlugin();
-
 
