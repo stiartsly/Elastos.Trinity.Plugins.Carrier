@@ -70,6 +70,13 @@
        "onChannelResume",
    ];
 
+   const CARRIER = 1;
+   const SESSION = 2;
+   const STREAM = 3;
+   const FRIEND_INVITE = 4;
+   const GROUP = 5 ;
+   const FILE_TRANSFER = 6 ;
+
    /**
     * @module CarrierPlugin
     */
@@ -1736,13 +1743,6 @@
        this.SRCEvent = [];
        this.SRCCount = 0;
 
-       const CARRIER = 1;
-       const SESSION = 2;
-       const STREAM = 3;
-       const FRIEND_INVITE = 4;
-       const GROUP = 5 ;
-       const FILE_TRANSFER = 6 ;
-
        /**
         * @description
         * Carrier node connection status to the carrier network.
@@ -2012,13 +2012,6 @@
                me.SRCEvent[id].callback(event);
            }
        };
-
-       this.setListener(CARRIER, this.onCarrierEvent);
-       this.setListener(STREAM, this.onStreamEvent);
-       this.setListener(FRIEND_INVITE, this.onFriendInviteResponse);
-       this.setListener(SESSION, this.onSessionRequestComplete);
-       this.setListener(GROUP, this.onGroupEvent);
-       this.setListener(FILE_TRANSFER, this.onFileTransferEvent);
    }
 
    CarrierPlugin.prototype = {
@@ -2095,6 +2088,13 @@
         * @param {CarrierCallbacks} callbacks The callbacks for carrier node.
         */
        createObject: function (onSuccess, onError, options, callbacks) {
+           this.setListener(CARRIER,this.onCarrierEvent)
+           this.setListener(STREAM,this.onStreamEvent)
+           this.setListener(FRIEND_INVITE,this.onFriendInviteResponse)
+           this.setListener(SESSION,this.onSessionRequestComplete)
+           this.setListener(GROUP,this.onGroupEvent)
+           this.setListener(FILE_TRANSFER,this.onFileTransferEvent)
+
            var carrier = new Carrier();
            var me = this;
            var _onSuccess = function (ret) {
